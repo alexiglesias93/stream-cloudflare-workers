@@ -1,0 +1,6 @@
+name = "stream-cfw"
+compatibility_date = "2023-01-01"
+
+kv_namespaces = [
+    { binding = "STREAM_TODOS", id = "e8c98701bd944c7d9c89fb4d9a7382be", preview_id = "e8c98701bd944c7d9c89fb4d9a7382be" },
+]
