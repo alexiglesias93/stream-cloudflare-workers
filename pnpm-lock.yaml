@@ -4,11 +4,13 @@ specifiers:
   '@cloudflare/workers-types': ^4.20221111.1
   '@types/uuid': ^9.0.1
   hono: ^3.1.6
+  superstruct: ^1.0.3
   uuid: ^9.0.0
   wrangler: ^2.7.1
 
 dependencies:
   hono: 3.1.6
+  superstruct: 1.0.3
   uuid: 9.0.0
 
 devDependencies:
@@ -893,6 +895,11 @@ packages:
     resolution: {integrity: sha512-dOESqjYr96iWYylGObzd39EuNTa5VJxyvVAEm5Jnh7KGo75V43Hk1odPQkNDyXNmUR6k+gEiDVXnjB8HJ3crXw==}
     engines: {node: '>=12'}
     dev: true
+
+  /superstruct/1.0.3:
+    resolution: {integrity: sha512-8iTn3oSS8nRGn+C2pgXSKPI3jmpm6FExNazNpjvqS6ZUJQCej3PUXEKM8NjHBOs54ExM+LPW/FBRhymrdcCiSg==}
+    engines: {node: '>=14.0.0'}
+    dev: false
 
   /to-regex-range/5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
