@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
-import { StatusCode } from 'hono/utils/http-status';
 import { v4 as uuidv4 } from 'uuid';
 import {
   assert,
@@ -11,6 +10,12 @@ import {
   string,
   StructError,
 } from 'superstruct';
+import {
+  authenticateUser,
+  helloMiddleware,
+  superSecretWeapon,
+} from './middleware';
+import { CoolerError } from './errors';
 
 /**
  * Livestream goals:
@@ -28,16 +33,13 @@ const todosSchema = object({
   completed: optional(boolean()),
 });
 
-class CoolerError extends Error {
-  constructor(public status: StatusCode, public message: string) {
-    super(message);
-    this.name = 'CoolerError';
-  }
-}
-
 type Context = {
   Bindings: {
     STREAM_TODOS: KVNamespace;
+  };
+  Variables: {
+    secret: string;
+    user_id: string;
   };
 };
 
@@ -58,22 +60,17 @@ app.onError((error, c) => {
   return c.json({ error: error.message, status }, status);
 });
 
-app.get('/', (c) => {
-  return c.text('Hello Joel!');
+app.get('/', helloMiddleware, superSecretWeapon, authenticateUser, (c) => {
+  const secret = c.get('secret');
+
+  // Fetch TODOs from the user
+  const user_id = c.get('user_id');
+
+  return c.text(secret);
 });
 
-app.get('/todos', async (c) => {
-  const items = await c.env.STREAM_TODOS.list();
-  const todos = await Promise.all(
-    items.keys.map(({ name }) => c.env.STREAM_TODOS.get(name))
-  );
-
-  return c.json(todos);
-});
-
-// https://example.com/todos/1234
-app.get('/todos/:user_id', async (c) => {
-  const user_id = c.req.param('user_id');
+app.get('/todos', authenticateUser, async (c) => {
+  const user_id = c.get('user_id');
 
   const items = await c.env.STREAM_TODOS.list({ prefix: `${user_id}_` });
   const todos = await Promise.all(
@@ -83,8 +80,8 @@ app.get('/todos/:user_id', async (c) => {
   return c.json(todos);
 });
 
-app.post('/todos/:user_id', async (c) => {
-  const user_id = c.req.param('user_id');
+app.post('/todos', authenticateUser, async (c) => {
+  const user_id = c.get('user_id');
   const data = await c.req.json();
 
   assert(data, todosSchema);
@@ -102,17 +99,6 @@ app.post('/todos/:user_id', async (c) => {
   await c.env.STREAM_TODOS.put(`${user_id}_${id}`, JSON.stringify(todo));
 
   return c.json(todo);
-});
-
-app.get('/error', (c) => {
-  const data = {
-    title: 'hey',
-    completed: 'false',
-  };
-
-  assert(data, todosSchema);
-
-  return c.json(data);
 });
 
 export default app;
