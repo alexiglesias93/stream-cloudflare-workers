@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "hono": "^3.1.6",
+    "jose": "^4.14.4",
     "superstruct": "^1.0.3",
     "uuid": "^9.0.0"
   },
