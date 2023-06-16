@@ -44,6 +44,7 @@ export const authenticateUser: MiddlewareHandler = async (c, next) => {
 
   // Inject user info
   c.set('user_id', result.payload.sub);
+  c.set('user_permissions', result.payload.permissions);
 
   await next();
 };
